@@ -1192,6 +1192,72 @@ def score_dimreduction_models(answers):
     
     return scores
 
+def get_current_scores(answers):
+    """Calculate scores based on current answers (may be partial)"""
+    branch = answers.get("Q1")
+    if not branch:
+        return None, []
+    
+    answers_with_inferred = infer_derived_answers(answers.copy())
+    
+    if branch == "supervised":
+        target_type = answers_with_inferred.get("Q2", "regression")
+        if target_type == "regression":
+            scores = score_regression_models(answers_with_inferred)
+        else:
+            scores = score_classification_models(answers_with_inferred)
+    elif branch == "clustering":
+        scores = score_clustering_models(answers_with_inferred)
+    else:
+        scores = score_dimreduction_models(answers_with_inferred)
+    
+    sorted_models = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+    return branch, sorted_models[:3]
+
+def render_live_leaderboard(answers):
+    branch, top_models = get_current_scores(answers)
+    
+    if not branch or not top_models:
+        return
+    
+    short_names = {
+        "K-Nearest Neighbors (Regression)": "KNN Regression",
+        "K-Nearest Neighbors (Classification)": "KNN Classification",
+        "Random Forest (Regression)": "Random Forest",
+        "Random Forest (Classification)": "Random Forest",
+        "Gradient Boosting (Regression)": "Gradient Boosting",
+        "Gradient Boosting (Classification)": "Gradient Boosting",
+        "Decision Trees (Regression)": "Decision Trees",
+        "Decision Trees (Classification)": "Decision Trees",
+        "Support Vector Machines (SVM)": "SVM",
+        "Principal Component Analysis (PCA)": "PCA",
+        "Gaussian Mixture Models (GMM)": "GMM",
+        "Hierarchical Agglomerative Clustering": "Hierarchical",
+    }
+    
+    rank_colors = ["#fbbf24", "#a8a8b8", "#cd7f32"]
+    
+    html_parts = []
+    html_parts.append('<div style="background: linear-gradient(135deg, #1a1a24 0%, #14141c 100%); border: 1px solid #3a3a4a; border-radius: 12px; padding: 1rem 1.25rem; margin-top: 0.5rem;">')
+    html_parts.append('<p style="font-size: 0.7rem; color: #6366f1; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem; font-weight: 600;">Live Rankings</p>')
+    
+    for i, (model, score) in enumerate(top_models):
+        display_name = short_names.get(model, model)
+        if len(display_name) > 20:
+            display_name = display_name[:17] + "..."
+        color = rank_colors[i]
+        border = "border-bottom: 1px solid #2a2a3a;" if i < 2 else ""
+        html_parts.append(f'<div style="display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0; {border}">')
+        html_parts.append(f'<div style="width: 26px; height: 26px; background: {color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">')
+        html_parts.append(f'<span style="color: #0f0f14; font-weight: 700; font-size: 0.75rem;">{i+1}</span>')
+        html_parts.append('</div>')
+        html_parts.append(f'<span style="color: #e0e0e8; font-size: 0.85rem; font-weight: 500;">{display_name}</span>')
+        html_parts.append('</div>')
+    
+    html_parts.append('</div>')
+    
+    st.markdown(''.join(html_parts), unsafe_allow_html=True)
+
 def get_model_justification(model, answers, branch):
     justifications = {
         "Linear Regression": "Simple, fast, and highly interpretable with clear coefficient meanings.",
@@ -1275,25 +1341,32 @@ def finder_page():
             q_id = question_order[current_q_idx]
             q_data = SURVEY_QUESTIONS[q_id]
             
-            progress = (step) / (len(question_order) + 1)
-            st.progress(progress)
-            st.markdown(f'<p style="font-size: 0.85rem; color: #9898a8; margin-bottom: 1.5rem;">Question {step} of {len(question_order)}</p>', unsafe_allow_html=True)
+            # Two-column layout: question on left, leaderboard on right
+            question_col, leaderboard_col = st.columns([3, 1])
             
-            answer = render_survey_question(q_id, q_data)
+            with question_col:
+                progress = (step) / (len(question_order) + 1)
+                st.progress(progress)
+                st.markdown(f'<p style="font-size: 0.85rem; color: #9898a8; margin-bottom: 1.5rem;">Question {step} of {len(question_order)}</p>', unsafe_allow_html=True)
+                
+                answer = render_survey_question(q_id, q_data)
+                
+                col1, col2, col3 = st.columns([1, 1, 1])
+                with col1:
+                    if st.button("Back", use_container_width=True):
+                        st.session_state.survey_step -= 1
+                        st.rerun()
+                with col3:
+                    if st.button("Next", use_container_width=True, type="primary"):
+                        st.session_state.survey_answers[q_id] = answer
+                        if current_q_idx + 1 >= len(question_order):
+                            st.session_state.survey_complete = True
+                        else:
+                            st.session_state.survey_step += 1
+                        st.rerun()
             
-            col1, col2, col3 = st.columns([1, 1, 1])
-            with col1:
-                if st.button("Back", use_container_width=True):
-                    st.session_state.survey_step -= 1
-                    st.rerun()
-            with col3:
-                if st.button("Next", use_container_width=True, type="primary"):
-                    st.session_state.survey_answers[q_id] = answer
-                    if current_q_idx + 1 >= len(question_order):
-                        st.session_state.survey_complete = True
-                    else:
-                        st.session_state.survey_step += 1
-                    st.rerun()
+            with leaderboard_col:
+                render_live_leaderboard(answers)
         else:
             st.session_state.survey_complete = True
             st.rerun()
