@@ -1029,21 +1029,21 @@ def score_regression_models(answers):
     if q7 in [1, 2]: scores["Decision Trees (Regression)"] += 20
     if q8: scores["Decision Trees (Regression)"] += 20
     
-    scores["Random Forest (Regression)"] = 40
+    scores["Random Forest (Regression)"] = 50
     if q3 >= 2: scores["Random Forest (Regression)"] += 20
     else: scores["Random Forest (Regression)"] -= 20
     if q7 in [2, 3]: scores["Random Forest (Regression)"] += 20
     if q8: scores["Random Forest (Regression)"] += 15
     if not q5: scores["Random Forest (Regression)"] += 10
     
-    scores["Gradient Boosting (Regression)"] = 40
+    scores["Gradient Boosting (Regression)"] = 50
     if q3 >= 2: scores["Gradient Boosting (Regression)"] += 20
     else: scores["Gradient Boosting (Regression)"] -= 20
     if q7 == 3: scores["Gradient Boosting (Regression)"] += 25
     if not q5: scores["Gradient Boosting (Regression)"] += 10
     if not q8: scores["Gradient Boosting (Regression)"] += 5
     
-    scores["K-Nearest Neighbors (Regression)"] = 30
+    scores["K-Nearest Neighbors (Regression)"] = 50
     if q3 <= 2: scores["K-Nearest Neighbors (Regression)"] += 20
     else: scores["K-Nearest Neighbors (Regression)"] -= 40
     if q4 <= 2: scores["K-Nearest Neighbors (Regression)"] += 15
@@ -1073,28 +1073,28 @@ def score_classification_models(answers):
     if q7 in [1, 2]: scores["Decision Trees (Classification)"] += 20
     if q8: scores["Decision Trees (Classification)"] += 20
     
-    scores["Random Forest (Classification)"] = 40
+    scores["Random Forest (Classification)"] = 50
     if q3 >= 2: scores["Random Forest (Classification)"] += 20
     else: scores["Random Forest (Classification)"] -= 15
     if q7 in [2, 3]: scores["Random Forest (Classification)"] += 20
     if q8: scores["Random Forest (Classification)"] += 15
     if q9: scores["Random Forest (Classification)"] += 15
     
-    scores["Gradient Boosting (Classification)"] = 40
+    scores["Gradient Boosting (Classification)"] = 50
     if q3 >= 2: scores["Gradient Boosting (Classification)"] += 20
     else: scores["Gradient Boosting (Classification)"] -= 15
     if q7 == 3: scores["Gradient Boosting (Classification)"] += 25
     if q9: scores["Gradient Boosting (Classification)"] += 15
     if not q5: scores["Gradient Boosting (Classification)"] += 10
     
-    scores["Support Vector Machines (SVM)"] = 35
+    scores["Support Vector Machines (SVM)"] = 50
     if q3 <= 3: scores["Support Vector Machines (SVM)"] += 20
     else: scores["Support Vector Machines (SVM)"] -= 50
     if q7 == 3: scores["Support Vector Machines (SVM)"] += 20
     if q4 <= 2: scores["Support Vector Machines (SVM)"] += 10
     if not q5: scores["Support Vector Machines (SVM)"] += 10
     
-    scores["K-Nearest Neighbors (Classification)"] = 30
+    scores["K-Nearest Neighbors (Classification)"] = 50
     if q3 <= 2: scores["K-Nearest Neighbors (Classification)"] += 20
     else: scores["K-Nearest Neighbors (Classification)"] -= 40
     if q4 <= 2: scores["K-Nearest Neighbors (Classification)"] += 15
@@ -1102,7 +1102,7 @@ def score_classification_models(answers):
     if q7 == 2: scores["K-Nearest Neighbors (Classification)"] += 10
     if not q5: scores["K-Nearest Neighbors (Classification)"] += 10
     
-    scores["Naive Bayes"] = 40
+    scores["Naive Bayes"] = 50
     if q6: scores["Naive Bayes"] += 35
     if q7 in [1, 2]: scores["Naive Bayes"] += 15
     if q5: scores["Naive Bayes"] += 20
@@ -1130,14 +1130,14 @@ def score_clustering_models(answers):
     if not q13: scores["K-Means"] += 10
     if q8: scores["K-Means"] -= 15
     
-    scores["Gaussian Mixture Models (GMM)"] = 40
+    scores["Gaussian Mixture Models (GMM)"] = 50
     if q3 <= 4: scores["Gaussian Mixture Models (GMM)"] += 15
     else: scores["Gaussian Mixture Models (GMM)"] -= 20
     if q12: scores["Gaussian Mixture Models (GMM)"] += 15
     if q14 in [1, 3]: scores["Gaussian Mixture Models (GMM)"] += 10
     if q15: scores["Gaussian Mixture Models (GMM)"] += 25
     
-    scores["DBSCAN"] = 35
+    scores["DBSCAN"] = 50
     if q3 <= 3 and q4 <= 2: scores["DBSCAN"] += 20
     else: scores["DBSCAN"] -= 15
     if not q18: scores["DBSCAN"] -= 40
@@ -1145,13 +1145,13 @@ def score_clustering_models(answers):
     if q14 == 2: scores["DBSCAN"] += 20
     if not q12: scores["DBSCAN"] += 15
     
-    scores["Spectral Clustering"] = 25
+    scores["Spectral Clustering"] = 50
     if q17: scores["Spectral Clustering"] += 25
     else: scores["Spectral Clustering"] -= 40
     if q14 == 2: scores["Spectral Clustering"] += 25
     if q7 == 3: scores["Spectral Clustering"] += 15
     
-    scores["Hierarchical Agglomerative Clustering"] = 35
+    scores["Hierarchical Agglomerative Clustering"] = 50
     if q3 <= 3: scores["Hierarchical Agglomerative Clustering"] += 20
     else: scores["Hierarchical Agglomerative Clustering"] -= 30
     if q16: scores["Hierarchical Agglomerative Clustering"] += 30
@@ -1175,7 +1175,7 @@ def score_dimreduction_models(answers):
     if q23: scores["Principal Component Analysis (PCA)"] += 25
     if q3 >= 4: scores["Principal Component Analysis (PCA)"] += 15
     
-    scores["T-SNE"] = 35
+    scores["T-SNE"] = 50
     if q22: scores["T-SNE"] += 25
     else: scores["T-SNE"] -= 40
     if q19 in [2, 3]: scores["T-SNE"] += 20
@@ -1183,7 +1183,7 @@ def score_dimreduction_models(answers):
     if not q20: scores["T-SNE"] += 10
     if not q23: scores["T-SNE"] += 5
     
-    scores["UMAP"] = 45
+    scores["UMAP"] = 50
     if q19 in [2, 3]: scores["UMAP"] += 20
     if q20: scores["UMAP"] += 20
     if q21 == 3: scores["UMAP"] += 20
